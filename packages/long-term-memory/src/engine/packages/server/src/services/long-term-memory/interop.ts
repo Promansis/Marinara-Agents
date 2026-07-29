@@ -16,7 +16,7 @@ import {
   getLtmScopeChatIds,
   withMergedLtmScopeLinks,
 } from "../../../../shared/src/features/agents/long-term-memory/scope.js";
-import { ltmModeForChatMode, resolveChatLtmScope } from "./chat-scope.js";
+import { ltmChatLabel, ltmModeForChatMode, resolveChatLtmScope } from "./chat-scope.js";
 import { nowIso } from "./ltm-utils.js";
 import {
   getPackageLanguageModels,
@@ -163,6 +163,8 @@ function summaries(metadata: Record<string, unknown>) {
         {
           id: text(entry.id) || `summary-${hash(`${index}:${content}`)}`,
           content,
+          messageIds: stringArray(entry.messageIds),
+          updatedAt: text(entry.updatedAt),
           range:
             start && end
               ? `${start}-${end}`
@@ -183,6 +185,8 @@ function summaries(metadata: Record<string, unknown>) {
             {
               id: `summary-legacy-${hash(legacy)}`,
               content: legacy,
+              messageIds: [],
+              updatedAt: null,
               range: "last messages",
               origin: "legacy",
             },
@@ -257,6 +261,8 @@ function summaries(metadata: Record<string, unknown>) {
                   {
                     id,
                     content,
+                    messageIds: [],
+                    updatedAt: null,
                     deterministicSourceText,
                     range: `game session ${Number.isFinite(sessionNumber) ? sessionNumber : index + 1}`,
                     origin: "game_session",
@@ -315,6 +321,31 @@ function matchesImportScope(candidateScope: LtmScope, scope?: LtmScope) {
       return false;
   }
   return true;
+}
+
+async function inheritedBranchSummaries(chat: {
+  branch: {
+    parentChatId: string | null;
+    parentMessageId: string | null;
+  } | null;
+}) {
+  const branch = chat.branch;
+  if (!branch?.parentChatId || !branch.parentMessageId) return [];
+  const persistence = getPackagePersistence();
+  const parent = await persistence.getChat(branch.parentChatId);
+  if (!parent) return [];
+  const messages = await persistence.listMessages(parent.id);
+  const cutoffIndex = messages.findIndex((message) => message.id === branch.parentMessageId);
+  if (cutoffIndex < 0) return [];
+  const forkedAt = messages[cutoffIndex]?.createdAt;
+  return summaries(object(parent.metadata)).filter((entry) => {
+    if (entry.messageIds.length === 0) return false;
+    if (entry.updatedAt && forkedAt && entry.updatedAt > forkedAt) return false;
+    return entry.messageIds.every((messageId) => {
+      const index = messages.findIndex((message) => message.id === messageId);
+      return index >= 0 && index <= cutoffIndex;
+    });
+  });
 }
 
 function lorebookScope(data: Record<string, unknown>) {
@@ -469,24 +500,30 @@ async function candidates(
       )
         continue;
       const metadata = object(chat.metadata),
-        chatMode = ltmModeForChatMode(chat.mode);
-      for (const entry of summaries(metadata)) {
-        const sourceId = `${chat.id}:${entry.id}`,
+        chatMode = ltmModeForChatMode(chat.mode),
+        branchLabel = ltmChatLabel(chat),
+        entries = [
+          ...summaries(metadata).map((entry) => ({ entry, inherited: false })),
+          ...(await inheritedBranchSummaries(chat)).map((entry) => ({ entry, inherited: true })),
+        ];
+      for (const { entry, inherited } of entries) {
+        const entryId = inherited ? `inherited:${entry.id}` : entry.id;
+        const sourceId = `${chat.id}:${entryId}`,
           provenance = {
             kind: "chat_summary" as const,
             sourceId: chat.id,
-            entryId: entry.id,
+            entryId,
           },
-          title = `${chat.name || "Chat"}, msgs ${entry.range}`,
-          seed = `${chat.id}:${entry.id}`,
+          title = `${branchLabel}, msgs ${entry.range}`,
+          seed = `${chat.id}:${entryId}`,
           legacy =
             entry.origin === "legacy"
               ? [
-                  `source_import_chat_${identifier(chat.name, "chat")}_${hash(seed)}`,
-                  `scene_import_chat_${identifier(chat.name, "chat")}_${hash(chat.id)}`,
+                  `source_import_chat_${identifier(branchLabel, "chat")}_${hash(seed)}`,
+                  `scene_import_chat_${identifier(branchLabel, "chat")}_${hash(chat.id)}`,
                 ]
               : [
-                  `source_import_chat_${identifier(chat.name, "chat")}_${hash(seed)}`,
+                  `source_import_chat_${identifier(branchLabel, "chat")}_${hash(seed)}`,
                 ];
         result.push({
           sourceId,
@@ -498,9 +535,10 @@ async function candidates(
           importTags: [],
           evidence: [
             `chat:${chat.id}`,
-            `chat_name:${chat.name || "Chat"}`,
-            `summary_entry:${entry.id}`,
+            `chat_name:${branchLabel}`,
+            `summary_entry:${entryId}`,
             `message_range:${entry.range}`,
+            ...(inherited ? [`inherited_from_chat:${chat.branch?.parentChatId}`] : []),
           ],
           provenance,
           scope: resolveChatLtmScope(chat),

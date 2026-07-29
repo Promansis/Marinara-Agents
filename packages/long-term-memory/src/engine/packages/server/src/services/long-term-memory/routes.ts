@@ -86,7 +86,7 @@ import { getLtmGlobalSettings, updateLtmGlobalSettings } from "./settings.js";
 import type { LongTermMemoryDraftStore } from "./draft-store.js";
 import type { LongTermMemoryStorage } from "./storage.js";
 import { readLongTermMemoryInjectionReceipt } from "./usage.js";
-import { ltmModeForChatMode, resolveChatLtmScope } from "./chat-scope.js";
+import { ltmChatLabel, ltmModeForChatMode, resolveChatLtmScope } from "./chat-scope.js";
 import { isLtmSourceNote } from "./source-extraction.js";
 import { processLongTermMemorySource } from "./source-processing.js";
 import {
@@ -542,7 +542,7 @@ export function createLongTermMemoryRoutes(runtime: {
           .filter((chat): chat is NonNullable<typeof chat> => Boolean(chat))
           .map((chat) => ({
             id: chat.id,
-            label: chat.name || chat.id,
+            label: ltmChatLabel(chat),
             mode: ltmModeForChatMode(chat.mode),
             groupId: chat.groupId,
           }))
@@ -555,8 +555,8 @@ export function createLongTermMemoryRoutes(runtime: {
               chatIds: members.map((chat) => chat.id),
               label:
                 members.length > 1
-                  ? `${members[0]?.name || "Chat"} and ${members.length - 1} branch${members.length === 2 ? "" : "es"}`
-                  : members[0]?.name || id,
+                  ? `${ltmChatLabel(members[0] ?? {})} and ${members.length - 1} branch${members.length === 2 ? "" : "es"}`
+                  : ltmChatLabel(members[0] ?? { name: id }),
             };
           })
           .sort((left, right) => left.label.localeCompare(right.label)),

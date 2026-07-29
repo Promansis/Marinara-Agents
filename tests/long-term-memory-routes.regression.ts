@@ -134,6 +134,15 @@ async function main() {
           enabled: true,
           rangeStartIndex: 1,
           rangeEndIndex: 12,
+          messageIds: ["parent-before", "parent-fork"],
+          updatedAt: "2026-07-17T00:00:00.000Z",
+        },
+        {
+          id: "summary-after-fork",
+          content: "This parent memory was created after the branch fork.",
+          enabled: true,
+          messageIds: ["parent-after"],
+          updatedAt: "2026-07-17T02:00:00.000Z",
         },
       ],
     };
@@ -197,6 +206,18 @@ async function main() {
       lastMessageAt: null,
       updatedAt: "2026-07-17T01:00:00.000Z",
     });
+    for (const chat of chats) chat.branch = null;
+    chats[1].branch = {
+      title: "  Archive branch  ",
+      parentChatId: "chat-a",
+      parentMessageId: "parent-fork",
+      childMessageId: "child-fork",
+    };
+    const messages = [
+      { id: "parent-before", chatId: "chat-a", role: "user", content: "Before", createdAt: "2026-07-17T00:00:00.000Z" },
+      { id: "parent-fork", chatId: "chat-a", role: "assistant", content: "Fork point", createdAt: "2026-07-17T01:00:00.000Z" },
+      { id: "parent-after", chatId: "chat-a", role: "user", content: "After", createdAt: "2026-07-17T03:00:00.000Z" },
+    ];
     cleanup = await activate({
       dataDir,
       api: {
@@ -336,6 +357,9 @@ async function main() {
             },
             async listChats() {
               return chats;
+            },
+            async listMessages(chatId: string) {
+              return messages.filter((message) => message.chatId === chatId);
             },
           },
         },
@@ -1543,6 +1567,21 @@ async function main() {
         ),
       true,
     );
+    const branchOnlyPreview = await app.inject({
+      method: "POST",
+      url: "/api/long-term-memory/import/preview",
+      headers,
+      payload: { source: "chats", limit: 10, scope: { chatIds: ["chat-b"] } },
+    });
+    assert.equal(branchOnlyPreview.statusCode, 200, branchOnlyPreview.body);
+    assert.equal(
+      branchOnlyPreview.json().samples.some(
+        (sample: any) =>
+          sample.sourceId === "chat-b:inherited:summary-a" &&
+          sample.title.startsWith("Archive branch, msgs"),
+      ),
+      true,
+    );
     const gamePreview = await app.inject({
       method: "POST",
       url: "/api/long-term-memory/import/preview",
@@ -1925,6 +1964,14 @@ async function main() {
         async listChats() {
           return chats;
         },
+        async listMessages(chatId: string) {
+          if (chatId !== "chat-a") return [];
+          return [
+            { id: "parent-before", chatId, role: "user", content: "Before", createdAt: "2026-07-17T00:00:00.000Z" },
+            { id: "parent-fork", chatId, role: "user", content: "Fork", createdAt: "2026-07-17T00:01:00.000Z" },
+            { id: "parent-after", chatId, role: "user", content: "After", createdAt: "2026-07-17T00:02:00.000Z" },
+          ];
+        },
       },
     });
     const lorePreview = await app.inject({
@@ -2027,11 +2074,12 @@ async function main() {
       headers,
       payload: { source: "chats", limit: 100 },
     });
-    const currentGameSample = currentGamePreview
-      .json()
-      .samples.find(
+    assert.equal(currentGamePreview.statusCode, 200, currentGamePreview.body);
+    const currentGameBody = currentGamePreview.json();
+    const currentGameSample = currentGameBody.samples.find(
         (sample: any) => sample.sourceId === "game-a:game-session-1",
       );
+    assert.ok(currentGameSample, currentGamePreview.body);
     assert.equal(currentGameSample.status, "imported");
     assert.equal(currentGameSample.freshness, "current");
     const contextGamePreview = await app.inject({

@@ -57,9 +57,22 @@ export type CapabilityRuntimeHost = {
       personaId: string | null;
       connectionId: string | null;
       metadata: unknown;
+      branch: {
+        title: string | null;
+        parentChatId: string | null;
+        parentMessageId: string | null;
+        childMessageId: string | null;
+      } | null;
       lastMessageAt: string | null;
       updatedAt: string;
     } | null>;
+    listMessages(chatId: string): Promise<Array<{
+      id: string;
+      chatId: string;
+      role: string;
+      content: string;
+      createdAt: string;
+    }>>;
     listChats(): Promise<Array<{
       id: string;
       name: string;
@@ -69,6 +82,12 @@ export type CapabilityRuntimeHost = {
       personaId: string | null;
       connectionId: string | null;
       metadata: unknown;
+      branch: {
+        title: string | null;
+        parentChatId: string | null;
+        parentMessageId: string | null;
+        childMessageId: string | null;
+      } | null;
       lastMessageAt: string | null;
       updatedAt: string;
     }>>;

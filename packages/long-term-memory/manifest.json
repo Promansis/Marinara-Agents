@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "capabilityApi": {
     "major": 1,
-    "minor": 6
+    "minor": 7
   },
   "builtAgainst": {
     "engineVersion": "2.3.5",
@@ -42,8 +42,8 @@
     },
     {
       "path": "server.mjs",
-      "sha256": "4bd5dff9f485304910c72a49f8ac8ce94c3f8c268e3c2677b202e2b773378da7",
-      "bytes": 342038
+      "sha256": "c4a9d1c696b4713d03f46b68c8e02d85e9bc44a2f3ad7ebabe01b56b41626e06",
+      "bytes": 342827
     },
     {
       "path": "client.js",

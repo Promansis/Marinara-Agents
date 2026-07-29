@@ -22,12 +22,22 @@ export function ltmModeForChatMode(mode: unknown): LtmMode {
   return sharedLtmModeForChatMode(mode);
 }
 
-export function resolveChatLtmScope(chat: { id: string; groupId?: string | null; personaId?: string | null; characterIds?: unknown }) {
+export function ltmChatLabel(chat: { name?: string | null; branch?: { title: string | null } | null }) {
+  return chat.branch?.title?.trim() || chat.name?.trim() || "Untitled branch";
+}
+
+export function resolveChatLtmScope(chat: {
+  id: string;
+  groupId?: string | null;
+  personaId?: string | null;
+  characterIds?: unknown;
+  branch?: { parentChatId: string | null } | null;
+}) {
   const characterIds = normalizeLtmChatCharacterIds(chat.characterIds);
   return withMergedLtmScopeLinks(
     {
       chatId: chat.id,
-      ...(chat.groupId ? { groupId: chat.groupId } : {}),
+      ...(!chat.branch?.parentChatId && chat.groupId ? { groupId: chat.groupId } : {}),
       ...(chat.personaId ? { personaId: chat.personaId } : {}),
       ...(characterIds.length ? { characterIds } : {}),
     },

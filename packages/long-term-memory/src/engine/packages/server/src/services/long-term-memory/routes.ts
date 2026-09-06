@@ -794,11 +794,13 @@ export function createLongTermMemoryRoutes(runtime: {
       );
       const currentChat = chatId ? eligibleChats.find((chat) => chat.id === chatId) : undefined;
       const catalogChats =
-        currentChat?.mode === "roleplay"
-          ? includeAllChats
-            ? eligibleChats.filter((chat) => chat.mode === "roleplay")
-            : [currentChat]
-          : [];
+        chatId === undefined && includeAllChats
+          ? eligibleChats.filter((chat) => chat.mode === "roleplay")
+          : currentChat?.mode === "roleplay"
+            ? includeAllChats
+              ? eligibleChats.filter((chat) => chat.mode === "roleplay")
+              : [currentChat]
+            : [];
       if (!catalogChats.length) return [];
       const catalogScope = {
         chatIds: catalogChats.map((chat) => chat.id),

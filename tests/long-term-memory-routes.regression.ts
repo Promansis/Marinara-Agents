@@ -1334,6 +1334,24 @@ async function main() {
       false,
       JSON.stringify(allLocalCharacters.json()),
     );
+    const allLocalCharactersWithoutChat = await app.inject({
+      method: "GET",
+      url: "/api/long-term-memory/local-characters?includeAllChats=true",
+      headers,
+    });
+    assert.equal(allLocalCharactersWithoutChat.statusCode, 200, allLocalCharactersWithoutChat.body);
+    assert.equal(
+      allLocalCharactersWithoutChat.json().some((character: any) => character.id === `${archiveChatFamilyId}:mara`),
+      true,
+      JSON.stringify(allLocalCharactersWithoutChat.json()),
+    );
+    const unknownChatLocalCharacters = await app.inject({
+      method: "GET",
+      url: "/api/long-term-memory/local-characters?chatId=missing-chat&includeAllChats=true",
+      headers,
+    });
+    assert.equal(unknownChatLocalCharacters.statusCode, 200, unknownChatLocalCharacters.body);
+    assert.deepEqual(unknownChatLocalCharacters.json(), []);
     assert.deepEqual(
       allScopeTargets.json().groups.find((group: any) => group.id === "observatory-branches"),
       {

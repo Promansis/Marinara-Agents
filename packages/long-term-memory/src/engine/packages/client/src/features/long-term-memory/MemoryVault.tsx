@@ -1799,7 +1799,12 @@ export default function MemoryVault({
       return scopeTargetLabel(subject.ref.kind, subject.ref.id, pickerTargets, {
         character: localizeUi("ui.longTermMemory.memoryvault.deletedCharacter"),
         persona: localizeUi("ui.longTermMemory.memoryvault.missingPersona"),
-        local_character: localizeUi("ui.longTermMemory.memoryvault.missingLocalCharacter"),
+        local_character:
+          localCharacters.isError && !localCharacters.data
+            ? localizeUi("ui.longTermMemory.memoryvault.unresolvedSubject")
+            : localCharacters.isLoading && !localCharacters.data
+              ? localizeUi("ui.longTermMemory.memoryvault.loadingLocalCharacter")
+              : localizeUi("ui.longTermMemory.memoryvault.missingLocalCharacter"),
       });
     return localizeUi("ui.longTermMemory.memoryvault.unresolvedSubject");
   };
@@ -3666,6 +3671,20 @@ export default function MemoryVault({
                                 ? localizeUi("ui.longTermMemory.memoryvault.personThisMemoryDescribes")
                                 : localizeUi("ui.longTermMemory.memoryvault.peopleInThisRelationship")}
                             </span>
+                            {localCharacters.isLoading && !localCharacters.data ? (
+                              <StatusSurface compact busy>
+                                {localizeUi("ui.longTermMemory.memoryvault.loadingLocalCharacters")}
+                              </StatusSurface>
+                            ) : localCharacters.isError && !localCharacters.data ? (
+                              <StatusSurface compact tone="danger">
+                                <span className="mr-auto">
+                                  {localizeUi("ui.longTermMemory.memoryvault.localCharactersUnavailable")}
+                                </span>
+                                <Button onClick={() => void localCharacters.refetch()}>
+                                  {localizeUi("ui.longTermMemory.memoryvault.retryLocalCharacters")}
+                                </Button>
+                              </StatusSurface>
+                            ) : null}
                             <div className="flex flex-wrap gap-1.5">
                               {(draft.subjects ?? []).map((subject, index) => (
                                 <Pill

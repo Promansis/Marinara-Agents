@@ -17,6 +17,10 @@ const routes = await readFile(
   "packages/long-term-memory/src/engine/packages/server/src/services/long-term-memory/routes.ts",
   "utf8",
 );
+const settings = await readFile(
+  "packages/long-term-memory/src/engine/packages/client/src/features/long-term-memory/MemorySettings.tsx",
+  "utf8",
+);
 
 assert.match(api, /export const ltmScopeTargetsKey = \(chatId: string \| null \| undefined\)/u);
 assert.match(vault, /queryKey: ltmScopeTargetsKey\(props\.chatId\)/u);
@@ -62,5 +66,9 @@ assert.doesNotMatch(scopeTargetsBlock, /loadTrustedLtmSubjectCatalog/u);
 assert.match(scopeTargetsBlock, /localCharacters: \[\]/u);
 assert.match(routes, /app\.get<\{ Querystring: unknown \}>\("\/local-characters"/u);
 assert.match(routes, /const catalog = await loadTrustedLtmSubjectCatalog\(catalogScope, root, notes\)/u);
+assert.match(vault, /localCharacters\.isLoading && !localCharacters\.data/u);
+assert.match(vault, /localCharacters\.isError && !localCharacters\.data/u);
+assert.match(vault, /localCharacters\.refetch\(\)/u);
+assert.equal((settings.match(/queryKeys\.localCharactersRoot/g) ?? []).length, 2);
 
 console.log("Long-Term Memory loading regression passed: scope loading stays separate from local-character discovery.");

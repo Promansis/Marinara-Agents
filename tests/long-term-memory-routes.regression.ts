@@ -1329,6 +1329,11 @@ async function main() {
       true,
       JSON.stringify(allLocalCharacters.json()),
     );
+    assert.equal(
+      allLocalCharacters.json().some((character: any) => character.label === "Game NPC"),
+      false,
+      JSON.stringify(allLocalCharacters.json()),
+    );
     assert.deepEqual(
       allScopeTargets.json().groups.find((group: any) => group.id === "observatory-branches"),
       {

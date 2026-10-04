@@ -53,6 +53,7 @@ const DEFAULT_SETTINGS: Record<string, unknown> = {
   imageCaptioningEnabled: false,
   imageCaptioningConnectionId: null,
   imageCaptioningUseConnectionDefault: true,
+  showImagesToWriter: true,
   enableLorebookContext: false,
   includeCharacterSchedules: false,
   enableEnhancedTimelineWriting: false,
@@ -390,6 +391,7 @@ export function createNoodleStorage(db: DB) {
       if ("imageWidth" in patch) patch.imageWidth = imageDimension(patch.imageWidth, 1024);
       if ("imageHeight" in patch) patch.imageHeight = imageDimension(patch.imageHeight, 1536);
       if ("autoTranslatePosts" in patch) patch.autoTranslatePosts = bool(patch.autoTranslatePosts);
+      if ("showImagesToWriter" in patch) patch.showImagesToWriter = bool(patch.showImagesToWriter);
       const next = { ...(await this.getSettings()), ...patch };
       await saveSettingsRaw(next);
       const schedule = await this.getRefreshSchedule();

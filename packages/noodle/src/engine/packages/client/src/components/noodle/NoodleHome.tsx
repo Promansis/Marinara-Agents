@@ -4101,6 +4101,13 @@ export function NoodleHome({ navigation, onNavigate, focusPostId, onFocusPostHan
           >
             <div className="space-y-3">
               <ToggleSetting
+                label={localizeUi("ui.noodle.noodlehome.showImagesToWriter")}
+                help={localizeUi("ui.noodle.noodlehome.showImagesToWriterHelp")}
+                checked={(settings as PackageNoodleSettings).showImagesToWriter !== false}
+                disabled={updateSettings.isPending}
+                onChange={(checked) => saveSettings({ showImagesToWriter: checked })}
+              />
+              <ToggleSetting
                 label={localizeUi("ui.noodle.noodlehome.imageCaptioning")}
                 help={localizeUi(
                   "ui.noodle.noodlehome.convertsTimelineImagesIntoConciseDescriptionsBeforeRefreshGeneration",

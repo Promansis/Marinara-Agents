@@ -5,11 +5,12 @@ export type PackageNoodleSettings = NoodleSettings & {
   imageHeight: number;
   enableImageInterpretation: boolean;
   autoTranslatePosts: boolean;
+  showImagesToWriter: boolean;
   promptPresets: import("./noodle-prompt-presets").NoodlePromptPreset[];
 };
 export type PackageNoodleSettingsUpdateInput = NoodleSettingsUpdateInput &
   Partial<Pick<PackageNoodleSettings, "imageWidth" | "imageHeight">> &
-  Partial<Pick<PackageNoodleSettings, "enableImageInterpretation" | "autoTranslatePosts">> &
+  Partial<Pick<PackageNoodleSettings, "enableImageInterpretation" | "autoTranslatePosts" | "showImagesToWriter">> &
   Partial<Pick<PackageNoodleSettings, "promptPresets">>;
 const PACKAGE_NOODLE_SETTINGS_DEFAULTS: PackageNoodleSettings = {
   ...DEFAULT_NOODLE_SETTINGS,
@@ -17,6 +18,7 @@ const PACKAGE_NOODLE_SETTINGS_DEFAULTS: PackageNoodleSettings = {
   imageHeight: 1536,
   enableImageInterpretation: true,
   autoTranslatePosts: false,
+  showImagesToWriter: true,
   promptPresets: [],
 };
 
@@ -50,6 +52,7 @@ export const NOODLE_SETTINGS_SECTION_KEYS: Record<NoodleSettingsSectionId, reado
     "imageCaptioningEnabled",
     "imageCaptioningConnectionId",
     "imageCaptioningUseConnectionDefault",
+    "showImagesToWriter",
   ],
   participants: [
     "participantSelectionMode",

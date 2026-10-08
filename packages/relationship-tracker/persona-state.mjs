@@ -216,6 +216,11 @@ export function createPersonaStateRepository(runtime) {
         if (stalePolicy === "reject") fail("Persona state changed while the model was running; retry the operation.", { code: "persona_state_stale", statusCode: 409 });
         return clone(state);
       }
+      // Persona switched or card removed while the model ran: the run is stale, not invalid. Write nothing.
+      if (proposed.some((input) => input?.personaId !== scope.persona.id || !scope.allowedCharacterIds.has(input?.characterId))) {
+        if (stalePolicy === "reject") fail("Persona state changed while the model was running; retry the operation.", { code: "persona_state_stale", statusCode: 409 });
+        return clone(state);
+      }
       const records = new Map(state.perceptions.map((entry) => [perceptionKey(entry), entry]));
       for (const input of proposed) {
         const perception = normalizePersonaPerception({ ...input, manuallyLocked: false }, { allowedCharacterIds: scope.allowedCharacterIds, expectedPersonaId: scope.persona.id });

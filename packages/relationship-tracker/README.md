@@ -8,13 +8,15 @@ The package is **staging only** for its first release: Engine `staging` users ca
 
 Use **Agents → Download Agents** and restart when prompted. Installing the package does not enable it globally: for each Roleplay chat, open **Chat Settings → Agents**, enable agents, add Relationship Tracker under Tracker Agents, and choose a model connection for it. The tracker works with the **Local Sidecar** or any configured API provider. In the Tracker Panel, select **All relationships** or **Scene-only relationships** once to initialize this chat before editing or updating relationships.
 
+The Tracker Panel's routes are privileged. When Marinara is opened from another device (LAN, phone, or reverse proxy), save the server's `ADMIN_SECRET` on that device under **Settings → Advanced → Admin Access**; the panel sends it exactly as Marinara's own UI does. Without it, the engine refuses the panel's requests.
+
 ## Use
 
 - Every assigned character card appears in the web, whether or not that character is currently in the scene. Defined lines use the four fixed color categories: positive, neutral, negative, complicated.
 - On desktop, hover or keyboard-focus a line to reveal its label. On touch and pen devices, press a line to reveal its label; press elsewhere in the web to dismiss it. This works for character-to-character lines and character-to-persona spokes.
 - The editor uses separate Character A and Character B selectors. Setting a relationship to **Undefined** and saving removes its line. Manual locks stay protected until **Resume automatic updates** is used.
 - The active persona renders as a distinct central node with directed spokes for each character's subjective view. Persona headings and accessible labels always use the current active persona name. **Show/Hide Persona** changes only the graphic.
-- **Update from History** re-checks a bounded recent window (1-100 messages) through the tracker's selected connection and updates every line that is not locked.
+- **Update from History** re-checks a bounded recent window (1-100 messages) through the tracker's selected connection (or, when none is chosen, the default agent connection and then the chat's connection) and updates every line that is not locked.
 - Prompt injection has two modes. **All relationships** injects every eligible defined line; **Scene-only relationships** injects only lines whose participants qualify as present in the bounded recent-message window (lookback defaults to 15 messages). Undefined relationships are never injected.
 
 The automatic tracker's **Context Size** (recent chat history supplied to the tracker model, default 5 messages), the **Presence lookback** (Scene-only eligibility, default 15 messages), and the **Update from History** message count are three separate controls with separate jobs.

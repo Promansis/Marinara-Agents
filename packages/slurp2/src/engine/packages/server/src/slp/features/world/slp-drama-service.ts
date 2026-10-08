@@ -79,6 +79,7 @@ export async function loadDramaWorld(
     tags: creator.tags,
     joinedAt: byId.get(creator.id)?.createdAt ?? at.toISOString(),
     followers: creator.followers,
+    romance: creator.romance,
   }));
   const automatic = new Set(creators.filter((creator) => creator.automatic).map((creator) => creator.id));
   const relations = new Map<string, { playerId: string; relation: SlpRelationToPlayer }[]>();
@@ -148,6 +149,8 @@ async function sendDramaJob(
     if (!viewer || !job.actorId) return "drop";
     const messages = createSlurpMessagesStorage(db);
     if (job.channel === "choice") {
+      // A roleplay scene holds the thread (docs/SCENES.md): the question waits in the queue.
+      if ((await messages.getThread(viewer, job.actorId))?.sceneChatId) return false;
       const sent = await messages.sendCreatorMessage(job.actorId, viewer, {
         content: text(job.choice!.question),
         metadata: {

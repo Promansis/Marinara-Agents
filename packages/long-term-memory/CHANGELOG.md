@@ -1,5 +1,9 @@
 # Long-Term Memory changelog
 
+## 1.5.0 — 2026-10-04
+
+- Complete recall explanations. Each recorded recall now states the parameters that actually applied (mode, resolved eligibility, character targeting, and how many recent messages were scanned), a snapshot of the index that served it (loaded, upgraded, or rebuilt; indexed vs eligible chunks; and when it was built), and a semantic outcome that tells disabled, unavailable, incompatible, no-matches, and contributed apart. The Activity recall workflow shows those concise facts, and the rejected list is labelled as bounded: recorded rejected candidates up to the cap, not the full set.
+
 ## 1.4.3 — 2026-10-03
 
 - Correlate recall selection with the confirmed injection through one attempt id, and record the outcomes the package actually observes: completed, skipped with a reason, cancelled, or failed. The last-injection panel now distinguishes a cancelled, failed, skipped, or completed-but-unconfirmed recall from one that never ran, instead of collapsing them all into "no recall recorded". Host-side non-invocation stays unknown.

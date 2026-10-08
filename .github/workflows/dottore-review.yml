@@ -38,7 +38,7 @@ concurrency:
 
 jobs:
   review:
-    uses: Pasta-Devs/Marinara-Engine/.github/workflows/dottore-review.yml@27b38ecb185d73384ae13a4fcd28a4e9040742a5
+    uses: Promansis/Marinara-Engine/.github/workflows/dottore-review.yml@c37d4556feb726a5ac8d739fb070873feb541fff
     with:
       pr_number: ${{ inputs.pr_number }}
       comment_body: ${{ inputs.comment_body }}

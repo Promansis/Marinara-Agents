@@ -4,6 +4,12 @@
     "modern-life-sim": {
       "versions": [
         {
+          "version": "0.3.1",
+          "date": "2026-10-01",
+          "notes": "- NPCs is a rule now, life by life: people who aren't in your cast, like a club's staff and its regulars. It starts off in a new life; a life that already had them keeps it on. Off, they step aside with their pictures, nothing deleted.\n- Once you're dating, you can stay the night at theirs, or have them stay at yours.\n- No more getting stuck at the end of someone's party, after a lunch break that already went by, with a money request in the middle of an outing, or after reloading during a honeymoon night.\n- In the optional Adult Module, the club's dancers and regulars are options that need NPCs.",
+          "highlight": false
+        },
+        {
           "version": "0.3.0",
           "date": "2026-09-30",
           "notes": "- Cooking and food: a kitchen at home, twelve recipes, a Cooking skill, and dinner on a date at your place.\n- A home of your own: Hillcrest on the hill, buying or a mortgage, furniture for each home, and people noticing where you live.\n- People drop by, and you throw parties at home, lived room by room; friends throw theirs, and birthdays are parties now.\n- Friends and family can live with you, as many as your home has rooms for.\n- Anyone in the cast can be your family, partner, ex or rival from day one.\n- Scenes do what's said: favours where they're told, money asked in your own words, outings that follow the talk, a memory for everyone there.\n- Clearer Special Actions, work from home, half the practice for skills, and always a way on when the model can't answer.\n- Many fixes, and more in the optional Adult Module.",

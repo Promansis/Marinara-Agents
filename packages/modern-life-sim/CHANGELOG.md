@@ -1,3 +1,9 @@
+## 0.3.1 — 2026-10-01
+- NPCs is a rule now, life by life: people who aren't in your cast, like a club's staff and its regulars. It starts off in a new life; a life that already had them keeps it on. Off, they step aside with their pictures, nothing deleted.
+- Once you're dating, you can stay the night at theirs, or have them stay at yours.
+- No more getting stuck at the end of someone's party, after a lunch break that already went by, with a money request in the middle of an outing, or after reloading during a honeymoon night.
+- In the optional Adult Module, the club's dancers and regulars are options that need NPCs.
+
 ## 0.3.0 — 2026-09-30
 - Cooking and food: a kitchen at home, twelve recipes, a Cooking skill, and dinner on a date at your place.
 - A home of your own: Hillcrest on the hill, buying or a mortgage, furniture for each home, and people noticing where you live.

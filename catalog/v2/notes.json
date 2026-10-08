@@ -422,6 +422,12 @@
     "slurp2": {
       "versions": [
         {
+          "version": "0.3.15",
+          "date": "2026-10-05",
+          "notes": "- Start real Engine roleplay scenes from character-backed Creator DMs, or accept a Creator invite. Choose availability and how the recap can reach Slurp.\n- Lock the DM and pause the Creator while a locking scene runs; return the recap to the thread on conclude and recover missed releases after discard, convert, delete, or restart.\n- Draft a post from one idea for review in the same composer on every page; Stir hands its draft to the composer.\n- Requires Engine Capability API 1.66 for native scene origins.",
+          "highlight": false
+        },
+        {
           "version": "0.3.12",
           "date": "2026-10-01",
           "notes": "- Fix: the follow-up scheduler no longer logs \"No text connection configured\" on every poll. It checks for due follow-ups first, and warns once per outage only when work is waiting.",
@@ -533,12 +539,6 @@
           "version": "0.2.72",
           "date": "2026-09-26",
           "notes": "- Storylines, Publishing, Images, Audience, Messaging and Prompts show their current settings as a row of chips under the page title. Tap a chip to jump to that setting, even inside a folded block.\n- Creator settings tabs with several parts start with a \"Jump to\" row.",
-          "highlight": false
-        },
-        {
-          "version": "0.2.71",
-          "date": "2026-09-25",
-          "notes": "- Bounded numbers are sliders with a value chip: weeks between storylines, storylines at once, wallet day start, weekly price change and creator revenue share. A slider saves when you let go.\n- Posts per day, storyline check interval and carryover limits have − and + buttons.\n- Messaging reply and away delays are four min–max rows instead of eight separate fields; the lower value can never pass the upper one.",
           "highlight": false
         }
       ]

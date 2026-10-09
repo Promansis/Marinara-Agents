@@ -54,6 +54,10 @@ jobs:
                       stream=True,
                       stream_options={"include_usage": True},
                       timeout=600,
+                      # An explicit ceiling shows whether the 7,999-token stop was a default cap, and a shared
+                      # cache key shows whether the repeated diff prompt is read from the cache.
+                      max_completion_tokens=64000,
+                      extra_body={"prompt_cache_key": "dottore-probe-1261"},
                   )
                   print(f"--- {label} headers after {time.time() - started:.1f}s", flush=True)
                   for chunk in stream:

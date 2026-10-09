@@ -11,7 +11,7 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
@@ -41,25 +41,31 @@ jobs:
               f"Pull request description:\n{message}\n\nDiff:\n{diff}"
           )
           client = OpenAI(api_key=os.environ["OPENAI_API_KEY"], base_url=os.environ.get("LLM_BASE_URL") or None)
-          for effort in ("low", "xhigh"):
+          # Latency check: every streamed event is logged with its delay, so the job log shows where time goes.
+          for label, content, effort in (("tiny", "Reply with the word ok.", "low"), ("diff", prompt, "low")):
               started = time.time()
-              text, usage, error = [], None, None
+              text, usage, events, error = [], None, 0, None
+              print(f"--- {label} effort={effort} chars={len(content)} start", flush=True)
               try:
                   stream = client.chat.completions.create(
                       model=os.environ["MODEL"],
-                      messages=[{"role": "user", "content": prompt}],
+                      messages=[{"role": "user", "content": content}],
                       reasoning_effort=effort,
                       stream=True,
                       stream_options={"include_usage": True},
-                      timeout=1500,
+                      timeout=180,
                   )
+                  print(f"--- {label} headers after {time.time() - started:.1f}s", flush=True)
                   for chunk in stream:
+                      events += 1
+                      if events <= 3 or events % 100 == 0:
+                          print(f"--- {label} event {events} at {time.time() - started:.1f}s", flush=True)
                       if chunk.choices and chunk.choices[0].delta.content:
                           text.append(chunk.choices[0].delta.content)
                       if chunk.usage:
                           usage = chunk.usage
               except Exception as exc:
                   error = repr(exc)
-              print(f"===== effort={effort} seconds={time.time() - started:.0f} error={error} =====", flush=True)
+              print(f"===== {label} effort={effort} seconds={time.time() - started:.1f} events={events} error={error} =====", flush=True)
               print(f"usage: {usage.model_dump() if usage else None}", flush=True)
               print("".join(text), flush=True)

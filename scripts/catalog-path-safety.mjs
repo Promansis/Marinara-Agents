@@ -48,11 +48,13 @@ export function resolvePortableRelativePath(root, value, label = "Path") {
   return candidate;
 }
 
+// Containment must hold after symlinks resolve: a canonical path that climbs out through ../ is rejected.
 function assertCanonicalContainment(canonicalRoot, canonicalCandidate, label) {
   const relativeCandidate = relative(canonicalRoot, canonicalCandidate);
   if (
     relativeCandidate.length === 0 ||
     relativeCandidate === ".." ||
+    relativeCandidate.startsWith(`..${sep}`) ||
     isAbsolute(relativeCandidate)
   ) {
     throw new Error(`${label} must stay within its root directory after resolving symlinks`);

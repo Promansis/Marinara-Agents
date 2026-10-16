@@ -53,7 +53,6 @@ function assertCanonicalContainment(canonicalRoot, canonicalCandidate, label) {
   if (
     relativeCandidate.length === 0 ||
     relativeCandidate === ".." ||
-    relativeCandidate.startsWith(`..${sep}`) ||
     isAbsolute(relativeCandidate)
   ) {
     throw new Error(`${label} must stay within its root directory after resolving symlinks`);

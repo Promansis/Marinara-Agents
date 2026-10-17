@@ -1,6 +1,7 @@
 import { lstat, realpath } from "node:fs/promises";
 import { dirname, isAbsolute, relative, resolve, sep } from "node:path";
 
+// Device names Windows reserves in any directory, with or without an extension.
 const WINDOWS_RESERVED_COMPONENT = /^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\..*)?$/iu;
 
 function isUnsafePortableSegment(segment) {
@@ -50,6 +51,7 @@ export function resolvePortableRelativePath(root, value, label = "Path") {
 
 function assertCanonicalContainment(canonicalRoot, canonicalCandidate, label) {
   const relativeCandidate = relative(canonicalRoot, canonicalCandidate);
+  // Reject the root itself, its parent, anything that climbs out of it, and a path on another drive.
   if (
     relativeCandidate.length === 0 ||
     relativeCandidate === ".." ||

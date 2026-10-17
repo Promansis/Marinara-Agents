@@ -50,6 +50,7 @@ export function resolvePortableRelativePath(root, value, label = "Path") {
 
 function assertCanonicalContainment(canonicalRoot, canonicalCandidate, label) {
   const relativeCandidate = relative(canonicalRoot, canonicalCandidate);
+  // The root itself, its parent, anything that climbs out of it, or another drive is outside the root.
   if (
     relativeCandidate.length === 0 ||
     relativeCandidate === ".." ||
